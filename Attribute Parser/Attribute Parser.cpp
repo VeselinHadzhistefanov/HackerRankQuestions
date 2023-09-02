@@ -9,6 +9,8 @@ using namespace std;
 void parseHRML(vector<string> HRMLLines, vector<string> queries) {
 
 	vector<vector<string>> HRML;
+	vector<string> tags;
+
 
 	for (int i = 0; i < HRMLLines.size(); i++) {
 		stringstream ss(HRMLLines[i]);
@@ -58,21 +60,62 @@ void parseHRML(vector<string> HRMLLines, vector<string> queries) {
 		}
 
 		HRML.push_back(attributes);
+		tags.push_back(tagName);
 	}
 
-	vector < vector<vector<string>>> HRMLAttributes;
+	vector<vector<vector<string>>> HRMLAttributes;
 
 	for (int i = 0; i < HRML.size(); i++) {
+
+		vector<vector<string>> attributes;
+		HRMLAttributes.push_back(attributes);
+
 		for (int j = 0; j < HRML[i].size(); j++) {
+			stringstream ss(HRML[i][j]);
+
+			char ch;
+			string element = "";
+			string type = "name";
 
 			string name;
 			string value;
-			if()
+			int numQuotes = 0;
 
+			vector<string> attribute;
 
+			while (ss >> ch) {
+				if (type == "name") {
+					if (ch != ' ') {
+						element.push_back(ch);
+					}
+					else {
+						type = "value";
+						element = "";
+						continue;
+					}
+				}
+				if (ch == '"') {
+					if (numQuotes == 0) {
+						numQuotes = 1;
+					}
+					if (numQuotes == 1) {
+						value = element;
+						continue;
+					}
+				}
 
+				if (numQuotes == 1 && type == "value") {
+					element.push_back(ch);
+				}
+			}
+
+			attribute.push_back(name);
+			attribute.push_back(value);
+			HRMLAttributes[i].push_back(attribute);
 		}
 	}
+
+
 
 }
 
